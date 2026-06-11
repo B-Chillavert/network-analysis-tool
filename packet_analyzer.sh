@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ==========================================
-# Automated Network Traffic Analyzer
-# Created for Security Portfolio & Packet Analysis
+# Automated Network Traffic Analyzer (v2.0)
+# Upgraded: Interactive Input & Validation
 # ==========================================
 
 echo "=========================================="
@@ -10,21 +10,38 @@ echo "Starting Automated Packet Capture Utility..."
 echo "=========================================="
 echo ""
 
-# Define file storage paths
-OUTPUT_FILE="captured_traffic.pcap"
-INTERFACE="eth0"
-PACKET_COUNT=25
+# 1. Dynamically prompt the user for the Network Interface
+read -p "[?] Enter the network interface to target (e.g., eth0): " INTERFACE
 
+# Quick validation: Check if the user left it blank
+if [ -z "$INTERFACE" ]; then
+    echo "[!] Error: Interface cannot be blank. Defaulting to eth0."
+    INTERFACE="eth0"
+fi
+
+# 2. Dynamically prompt the user for the Packet Count
+read -p "[?] Enter the number of packets to capture (e.g., 10, 25, 50): " PACKET_COUNT
+
+# Quick validation: If input is not a number, default to 15
+if ! [[ "$PACKET_COUNT" =~ ^[0-8]+$ ]]; then
+    echo "[!] Invalid number or blank. Defaulting to 15 packets."
+    PACKET_COUNT=15
+fi
+
+# Define dynamic output file name based on the interface used
+OUTPUT_FILE="captured_${INTERFACE}_traffic.pcap"
+
+echo ""
 echo "[*] Targeted Interface: $INTERFACE"
 echo "[*] Capturing limit: $PACKET_COUNT packets"
 echo "[*] Saving raw binary data to: $OUTPUT_FILE"
 echo ""
 echo "[*] Analysis engine active. Please generate network activity..."
 
-# Run tcpdump in the background and save to a file (-w)
+# Run tcpdump using the dynamic variables
 sudo tcpdump -i $INTERFACE -c $PACKET_COUNT -w $OUTPUT_FILE
 
 echo ""
 echo "=========================================="
-echo "[+] Capture Finished! Packet file compiled successfully."
+echo "[+] Capture Finished! $OUTPUT_FILE compiled successfully."
 echo "=========================================="
