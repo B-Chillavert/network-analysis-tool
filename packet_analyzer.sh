@@ -1,4 +1,14 @@
 #!/bin/bash
+# --------------------------------------------------
+# CRITICAL PRIVILEGE CHECK: Ensure script is run as root
+# --------------------------------------------------
+if [ "$EUID" -ne 0 ]; then
+    echo "=================================================="
+    echo "[!] ERROR: This security utility requires administrative privileges."
+    echo "[!] Please re-run this tool using: sudo ./packet_analyzer.sh"
+    echo "=================================================="
+    exit 1
+fi
 
 # ==========================================
 # Automated Network Traffic Analyzer (v2.0)
